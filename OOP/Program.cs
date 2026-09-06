@@ -15,6 +15,11 @@
 
             //support iheritance                not support iheritance
             #endregion
+
+            #region Question02
+            //Why are classes more suitable than structs for large applications?
+            //lasses are usually more suitable than structs for large applications because classes are reference types, while structs are value types.
+            #endregion
         }
     }
 }

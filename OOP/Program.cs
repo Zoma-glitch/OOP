@@ -440,6 +440,7 @@
         //    private decimal customsFee;
 
         //    public string DestinationCountry
+
         //    {
         //        get { return destinationCountry; }
         //        set

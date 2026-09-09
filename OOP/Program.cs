@@ -13,6 +13,16 @@
 
 
             #endregion
+
+
+            #region Question01(b)
+
+            //Static Binding means method call at compile time
+
+            //Dynamic Binding means method call at runtime
+
+            #endregion
+
         }
     }
 }

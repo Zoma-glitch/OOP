@@ -4,7 +4,15 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            #region Question01
+
+            //overloading means same + different parameters + static binding + compile time
+
+            //overriding means child redefines Parent method + Dynamic Binding + Runtime
+
+
+
+            #endregion
         }
     }
 }

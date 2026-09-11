@@ -264,6 +264,28 @@
                     50);
 
             priority.GenerateCustomsReport();
+
+            Console.WriteLine("\n--- Tracking Statuses ---");
+            center.PrintTrackingStatuses();
+
+            Console.WriteLine("\n--- Insurance Costs ---");
+            center.PrintInsuranceCosts();
+
+            // ================= INTERFACE ARRAYS =================
+            ITrackable[] trackables = { shipment1, shipment2, shipment3 };
+            Console.WriteLine("\n--- Tracking from ITrackable[] ---");
+            foreach (ITrackable t in trackables)
+            {
+                Console.WriteLine(t.GetTrackingStatus());
+            }
+
+            IInsurable[] insurables = { shipment1, shipment2, shipment3 };
+            Console.WriteLine("\n--- Insurance from IInsurable[] ---");
+            foreach (IInsurable ins in insurables)
+            {
+                Console.WriteLine("Insurance Cost: " + ins.CalculateInsurance());
+            }
+
             // ================= PRINT REMAINING =================
 
             Console.WriteLine("\n--- Remaining Shipments ---");
@@ -374,7 +396,7 @@
             }
         }
 
-        public class StandardShipment : shipment
+        public class StandardShipment : shipment , ITrackable , IInsurable
         {
             public StandardShipment(string trackingCode, string description, decimal weight, decimal deliveryFee, DeliveryAddress destination) : base(trackingCode, description, weight, deliveryFee, destination)
             {
@@ -384,6 +406,16 @@
             public override decimal EstimatedCost
             {
                 get { return DeliveryFee + (Weight * 5); }
+            }
+
+            public decimal CalculateInsurance()
+            {
+                return EstimatedCost * 0.05m;
+            }
+
+            public string GetTrackingStatus()
+            {
+                return $"Shipment {TrackingCode} is Ready."; 
             }
 
             public override void PrintShipment()
@@ -397,7 +429,7 @@
             }
         }
 
-        public class ExpressShipment : shipment
+        public class ExpressShipment : shipment , IInsurable , ITrackable
         {
             private decimal extraFee;
 
@@ -430,6 +462,15 @@
             {
                 ExtraFee = extraFee;
             }
+            public decimal CalculateInsurance()
+            {
+                return EstimatedCost * 0.08m;
+            }
+
+            public string GetTrackingStatus()
+            {
+                return $"Shipment {TrackingCode} is Out for Delivery.";
+            }
             public override void PrintShipment()
             {
                 Console.WriteLine("Tracking Code: " + TrackingCode);
@@ -441,7 +482,7 @@
                 Console.WriteLine("Extra Fee: " + ExtraFee);
             }
         }
-        public class InternationalShipment : shipment
+        public class InternationalShipment : shipment , IInsurable , ITrackable
         {
             private string destinationCountry;
             private decimal customsFee;
@@ -480,7 +521,15 @@
             {
                 Console.WriteLine("Customs Report");
             }
+            public decimal CalculateInsurance()
+            {
+                return EstimatedCost * 0.12m;
+            }
 
+            public string GetTrackingStatus()
+            {
+                return $"Shipment {TrackingCode} has been Delivered.";
+            }
 
             public override void PrintShipment()
             {
@@ -619,6 +668,30 @@
                 return false;
             }
 
+            public void PrintTrackingStatuses()
+            {
+                for (int i = 0; i < shipments.Length; i++)
+                {
+                    ITrackable trackableShipment = shipments[i] as ITrackable;
+                    if (trackableShipment != null)
+                    {
+                        Console.WriteLine(trackableShipment.GetTrackingStatus());
+                    }
+                }
+            }
+            public void PrintInsuranceCosts()
+            {
+                for (int i = 0; i < shipments.Length; i++)
+                {
+                    IInsurable insurableShipment = shipments[i] as IInsurable;
+                    if (insurableShipment != null)
+                    {
+                        Console.WriteLine("Insurance Cost: " + insurableShipment.CalculateInsurance());
+                    }
+                }
+            }
+
+
             public void PrintAllShipments()
             {
                 for (int i = 0; i < shipments.Length; i++)
@@ -643,14 +716,26 @@
 
         public sealed class CompletedShipment : shipment
         {
-            public CompletedShipment(
-                string trackingCode,
-                string description,
-                decimal weight,
-                decimal deliveryFee,
-                DeliveryAddress destination)
-                : base(trackingCode, description, weight, deliveryFee, destination)
+            public CompletedShipment(string trackingCode, string description, decimal weight, decimal deliveryFee,DeliveryAddress destination): base(trackingCode, description, weight, deliveryFee, destination)
+
             {
+
+            }
+            public override decimal EstimatedCost
+            {
+                get { return DeliveryFee + (Weight * 5); }
+            }
+
+            public override void PrintShipment()
+            {
+                Console.WriteLine("=== Completed Shipment ===");
+                Console.WriteLine("Tracking Code: " + TrackingCode);
+                Console.WriteLine("Description: " + Description);
+                Console.WriteLine("Weight: " + Weight);
+                Console.WriteLine("Delivery Fee: " + DeliveryFee);
+                Console.WriteLine("Destination: " + Destination.GetFullAddress());
+                Console.WriteLine("Estimated Cost: " + EstimatedCost);
+                Console.WriteLine("Status: Shipment is completed and archived ");
             }
         }
 
@@ -670,5 +755,20 @@
                 return City + "," + Street + "Building" + BuildingNumber;
             }
         }
+        public static class DeliveryReport
+        {
+            
+            public static void PrintShipment(ITrackable shipment)
+            {
+                Console.WriteLine(shipment.GetTrackingStatus());
+            }
+
+            
+            public static void PrintInsurance(IInsurable shipment)
+            {
+                Console.WriteLine("Insurance Cost: " + shipment.CalculateInsurance());
+            }
+        }
+
     }
 }
